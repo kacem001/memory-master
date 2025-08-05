@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Match Animals & Colors</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="icon-btn" id="settings-btn">
+        <img src="https://cdn-icons-png.flaticon.com/512/3953/3953226.png" width="24" height="24">
+      </button>
+      <button class="icon-btn" id="sound-btn">
+        <img src="https://cdn-icons-png.flaticon.com/512/7640/7640163.png" id="sound-icon" width="24" height="24">
+      </button>
+    </div>
+    <div class="topbar-right">
+      <div class="language-switcher">
+        <select id="lang-select" class="lang-select">
+          <option value="en">En English</option>
+          <option value="ar">Ar عربي</option>
+          <option value="fr">🇫🇷 Français</option>
+          <option value="id">🇮🇩 Bahasa Indonesia</option>
+          <option value="ja">🇯🇵 日本語</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="header">
+    <h1 id="game-title">Match Animals & Colors</h1>
+    <div class="info">
+      <div class="badge" id="time-label">Time: <span id="timer">00:00</span></div>
+    </div>
+  </div>
+  <div class="board" id="board" aria-label="Matching board"></div>
+  <div class="controls" id="controls">
+    <button class="btn" id="restart" aria-label="Restart game"></button>
+    <button class="btn" id="show-all" aria-label="Show all cards"></button>
+    <a href="leaderboard.html" class="btn" id="leaderboard-btn" aria-label="View leaderboard"></a>
+  </div>
+  <div class="overlay hidden" id="done">
+    <div class="large" id="victory-text"></div>
+    <div class="small" id="final-time-text"></div>
+    <div id="save-score-popup">
+      <label for="username-input" id="username-label"></label>
+      <input type="text" id="username-input" maxlength="16" aria-describedby="username-label" required>
+      <div id="avatar-select"></div>
+      <div style="display: flex; gap: 10px; margin-top: 10px;">
+        <button class="btn" id="submit-username"></button>
+        <button class="btn" id="back-to-buttons" style="background: #ccc; color: #333;"></button>
+      </div>
+      <div id="score-msg"></div>
+    </div>
+    <div id="done-buttons" class="done-actions hidden">
+      <button class="btn" id="play-again-btn"></button>
+      <button class="btn" id="save-to-leaderboard-btn"></button>
+      <a href="leaderboard.html" class="btn" id="to-leaderboard"></a>
+    </div>
+  </div>
+  <div class="settings-popup hidden" id="settings-popup">
+    <div class="settings-content">
+      <div id="settings-title"></div>
+      <div class="setting-row">
+        <label id="theme-label" for="theme-select"></label>
+        <select id="theme-select">
+          <option value="light">🌞</option>
+          <option value="dark">🌚</option>
+        </select>
+      </div>
+      <div class="setting-row">
+        <label id="audio-label" for="audio-range"></label>
+        <input type="range" id="audio-range" min="0" max="100">
+        <span id="audio-value"></span>
+      </div>
+      <div class="setting-row">
+        <label id="type-label" for="type-select"></label>
+        <select id="type-select">
+          <option value="animals"></option>
+          <option value="colors"></option>
+          <option value="mixed"></option>
+        </select>
+      </div>
+      <div class="setting-row">
+        <label id="size-label" for="size-select"></label>
+        <select id="size-select"></select>
+      </div>
+      <button class="btn" id="settings-exit"></button>
+    </div>
+  </div>
+  <script src="languages.js"></script>
+  <script src="app.js"></script>
+</body>
+
+</html>

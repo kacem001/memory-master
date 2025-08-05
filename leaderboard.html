@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <title>لوحة الصدارة</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .leaderboard-topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 0 20px;
+        }
+
+        .topbar-spacer {
+            min-width: 140px;
+        }
+
+        .leaderboard-topbar h2 {
+            flex: 1;
+            text-align: center;
+            font-size: 1.8rem;
+            color: var(--accent);
+            margin: 0;
+        }
+
+        body.dark .leaderboard-topbar h2 {
+            color: var(--dark-accent);
+        }
+
+        @media(max-width: 480px) {
+            .leaderboard-topbar {
+                flex-direction: column;
+                gap: 15px;
+                padding: 0 10px;
+            }
+
+            .topbar-spacer {
+                display: none;
+            }
+
+            .leaderboard-topbar .language-switcher {
+                justify-content: center;
+            }
+        }
+
+        .leaderboard-topbar .language-switcher {
+            min-width: 140px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .leaderboard-card {
+            background: #fff;
+            border-radius: 13px;
+            box-shadow: 0 2px 10px #0001;
+            padding: 14px 18px;
+            display: flex;
+            gap: 26px;
+            align-items: center;
+            margin-bottom: 13px;
+            flex-wrap: wrap;
+        }
+
+        .leaderboard-field {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 70px;
+            margin: 0 7px;
+        }
+
+        .leaderboard-label {
+            font-size: 0.93rem;
+            font-weight: 500;
+            color: #e88e2e;
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .leaderboard-value {
+            font-size: 1.04rem;
+            font-weight: bold;
+            color: #222;
+            word-break: break-all;
+        }
+
+        .leaderboard-avatar {
+            border-radius: 50%;
+            background: #ffe3c0;
+            padding: 2px;
+        }
+
+        @media(max-width: 600px) {
+            .leaderboard-card {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .leaderboard-field {
+                align-items: flex-start;
+                min-width: unset;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="leaderboard-topbar">
+        <div class="topbar-spacer"></div>
+        <h2 id="leaderboard-label" style="margin:0; text-align: center;">لوحة الصدارة</h2>
+        <div class="language-switcher">
+            <select id="lang-select" class="lang-select">
+                <option value="ar">🇩🇿 عربي</option>
+                <option value="en">🇬🇧 English</option>
+                <option value="fr">🇫🇷 Français</option>
+                <option value="id">🇮🇩 Bahasa Indonesia</option>
+                <option value="ja">🇯🇵 日本語</option>
+            </select>
+        </div>
+    </div>
+    <div id="leaderboard-filter"></div>
+    <div id="leaderboard-list"></div>
+    <div style="text-align: center; margin: 30px 0 20px 0;">
+        <a id="back-btn" href="index.html" class="btn" style="min-width: 150px; font-size: 1.1rem;">رجوع</a>
+    </div>
+    <script src="languages.js"></script>
+    <script src="leaderboard.js"></script>
+</body>
+
+</html>
