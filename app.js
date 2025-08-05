@@ -1,4 +1,4 @@
-const BACKEND_URL = "http://localhost:3000/leaderboard";
+const BACKEND_URL = "/leaderboard";
 const AVATARS = [
     "https://cdn-icons-png.flaticon.com/512/9131/9131529.png",
     "https://cdn-icons-png.flaticon.com/512/11498/11498793.png",
