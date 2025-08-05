@@ -52,12 +52,12 @@ app.use((req, res, next) => {
     else if (userAgent.includes('Edge')) browser = 'Edge';
 
     // طباعة معلومات الزائر
-    console.log(`\n🌐 === زائر جديد ===`);
-    console.log(`📅 التوقيت: ${timestamp}`);
+    console.log(`\n🌐 === New Visitor ===`);
+    console.log(`📅 Timestamp: ${timestamp}`);
     console.log(`🌍 IP Address: ${ip}`);
-    console.log(`📱 الجهاز: ${deviceInfo}`);
-    console.log(`🌐 المتصفح: ${browser}`);
-    console.log(`📍 الصفحة: ${method} ${url}`);
+    console.log(`📱 Device: ${deviceInfo}`);
+    console.log(`🌐 Browser: ${browser}`);
+    console.log(`📍 Page: ${method} ${url}`);
     console.log(`🔧 User-Agent: ${userAgent}`);
     console.log(`========================\n`);
 
@@ -99,12 +99,12 @@ function processWriteQueue() {
     const { data, resolve } = writeQueue.shift();
 
     try {
-        console.log('📝 حفظ البيانات في الملف...', data.length, 'عنصر');
+        console.log('📝 Saving data to file...', data.length, 'items');
         fs.writeFileSync(leaderboardFile, JSON.stringify(data, null, 2));
-        console.log('✅ تم حفظ البيانات بنجاح في', leaderboardFile);
+        console.log('✅ Data saved successfully to', leaderboardFile);
         resolve(true);
     } catch (error) {
-        console.error('❌ خطأ في حفظ لوحة الصدارة:', error);
+        console.error('❌ Error saving leaderboard:', error);
         resolve(false);
     } finally {
         isWriting = false;
@@ -114,9 +114,9 @@ function processWriteQueue() {
 }
 
 app.get('/', (req, res, next) => {
-    console.log(`🎮 === لاعب دخل اللعبة ===`);
-    console.log(`📅 ${new Date().toLocaleString('ar-EG')}`);
-    console.log(`🎯 بدء جلسة لعب جديدة`);
+    console.log(`🎮 === Player Entered Game ===`);
+    console.log(`📅 ${new Date().toLocaleString('en-US')}`);
+    console.log(`🎯 New game session started`);
     console.log(`==========================\n`);
     next();
 });
@@ -127,30 +127,30 @@ app.get('/leaderboard', (req, res) => {
 });
 
 app.post('/leaderboard', async (req, res) => {
-    console.log('📥 === طلب حفظ نتيجة ===');
-    console.log('البيانات المستلمة:', req.body);
+    console.log('📥 === Score Save Request ===');
+    console.log('Received data:', req.body);
 
     const { username, score, avatar, boardSize, gameType } = req.body;
     if (!username || !score || !boardSize) {
-        console.log('❌ بيانات ناقصة:', { username, score, boardSize });
+        console.log('❌ Missing data:', { username, score, boardSize });
         return res.status(400).json({ error: "name, score, and board required" });
     }
 
     try {
         let board = readLeaderboard();
-        console.log('📋 لوحة الصدارة الحالية:', board.length, 'عنصر');
+        console.log('📋 Current leaderboard:', board.length, 'items');
 
         let user = board.find(u => u.username === username && u.boardSize === boardSize && u.gameType === gameType);
 
         if (!user) {
             board.push({ username, score, avatar, boardSize, gameType });
             await writeLeaderboard(board);
-            console.log(`🏆 === رقم قياسي جديد! ===`);
-            console.log(`🏅 اللاعب: ${username}`);
-            console.log(`⏱️ الوقت: ${score} ثانية`);
-            console.log(`🎯 حجم اللوحة: ${boardSize}`);
-            console.log(`🎮 نوع اللعبة: ${gameType}`);
-            console.log(`📅 ${new Date().toLocaleString('ar-EG')}`);
+            console.log(`🏆 === New Record! ===`);
+            console.log(`🏅 Player: ${username}`);
+            console.log(`⏱️ Time: ${score} seconds`);
+            console.log(`🎯 Board Size: ${boardSize}`);
+            console.log(`🎮 Game Type: ${gameType}`);
+            console.log(`📅 ${new Date().toLocaleString('en-US')}`);
             console.log(`==========================\n`);
             res.json({ status: "added" });
         } else {
@@ -158,39 +158,39 @@ app.post('/leaderboard', async (req, res) => {
                 user.score = score;
                 user.avatar = avatar;
                 await writeLeaderboard(board);
-                console.log(`🏆 === تحسين رقم قياسي! ===`);
-                console.log(`🏅 اللاعب: ${username}`);
-                console.log(`⏱️ الوقت الجديد: ${score} ثانية`);
-                console.log(`🎯 حجم اللوحة: ${boardSize}`);
-                console.log(`🎮 نوع اللعبة: ${gameType}`);
-                console.log(`📅 ${new Date().toLocaleString('ar-EG')}`);
+                console.log(`🏆 === Record Improved! ===`);
+                console.log(`🏅 Player: ${username}`);
+                console.log(`⏱️ New Time: ${score} seconds`);
+                console.log(`🎯 Board Size: ${boardSize}`);
+                console.log(`🎮 Game Type: ${gameType}`);
+                console.log(`📅 ${new Date().toLocaleString('en-US')}`);
                 console.log(`==========================\n`);
                 res.json({ status: "updated" });
             } else {
-                console.log(`📊 لا يوجد تحسن: ${username} - ${score} >= ${user.score}`);
+                console.log(`📊 No improvement: ${username} - ${score} >= ${user.score}`);
                 res.json({ status: "notupdated" });
             }
         }
     } catch (error) {
-        console.error('❌ خطأ في معالجة لوحة الصدارة:', error);
+        console.error('❌ Error processing leaderboard:', error);
         res.status(500).json({ error: "Server error" });
     }
 });
 
 app.listen(PORT, () => {
-    console.log('\n🎮 ==== خادم لعبة الذاكرة جاهز! ====');
-    console.log(`🌐 الرابط المحلي: http://localhost:${PORT}`);
-    console.log(`🏆 لوحة الصدارة: http://localhost:${PORT}/leaderboard`);
-    console.log(`📅 وقت البدء: ${new Date().toLocaleString('ar-EG')}`);
+    console.log('\n🎮 ==== Memory Game Server Ready! ====');
+    console.log(`🌐 Local URL: http://localhost:${PORT}`);
+    console.log(`🏆 Leaderboard: http://localhost:${PORT}/leaderboard`);
+    console.log(`📅 Started at: ${new Date().toLocaleString('en-US')}`);
 
     // عرض إحصائيات أساسية
     const board = readLeaderboard();
-    console.log(`📊 إجمالي الأرقام القياسية: ${board.length}`);
+    console.log(`📊 Total Records: ${board.length}`);
 
     if (board.length > 0) {
         const bestScore = Math.min(...board.map(b => b.score));
         const bestPlayer = board.find(b => b.score === bestScore);
-        console.log(`🥇 أفضل لاعب: ${bestPlayer.username} (${bestScore} ثانية)`);
+        console.log(`🥇 Best Player: ${bestPlayer.username} (${bestScore} seconds)`);
     }
 
     console.log('=====================================\n');
