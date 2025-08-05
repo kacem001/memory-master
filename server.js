@@ -14,6 +14,56 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(__dirname));
 
+// تسجيل معلومات الزوار
+app.use((req, res, next) => {
+    const ip = req.headers['x-forwarded-for'] ||
+        req.headers['x-real-ip'] ||
+        req.connection.remoteAddress ||
+        req.socket.remoteAddress ||
+        req.ip ||
+        'Unknown';
+
+    const userAgent = req.headers['user-agent'] || 'Unknown';
+    const timestamp = new Date().toISOString();
+    const url = req.url;
+    const method = req.method;
+
+    // استخراج معلومات الجهاز من User-Agent
+    let deviceInfo = 'Unknown Device';
+    if (userAgent.includes('Mobile') || userAgent.includes('Android') || userAgent.includes('iPhone')) {
+        if (userAgent.includes('iPhone')) deviceInfo = 'iPhone';
+        else if (userAgent.includes('Android')) deviceInfo = 'Android Phone';
+        else deviceInfo = 'Mobile Device';
+    } else if (userAgent.includes('iPad')) {
+        deviceInfo = 'iPad';
+    } else if (userAgent.includes('Windows')) {
+        deviceInfo = 'Windows PC';
+    } else if (userAgent.includes('Mac')) {
+        deviceInfo = 'Mac';
+    } else if (userAgent.includes('Linux')) {
+        deviceInfo = 'Linux PC';
+    }
+
+    // استخراج المتصفح
+    let browser = 'Unknown Browser';
+    if (userAgent.includes('Chrome')) browser = 'Chrome';
+    else if (userAgent.includes('Firefox')) browser = 'Firefox';
+    else if (userAgent.includes('Safari')) browser = 'Safari';
+    else if (userAgent.includes('Edge')) browser = 'Edge';
+
+    // طباعة معلومات الزائر
+    console.log(`\n🌐 === زائر جديد ===`);
+    console.log(`📅 التوقيت: ${timestamp}`);
+    console.log(`🌍 IP Address: ${ip}`);
+    console.log(`📱 الجهاز: ${deviceInfo}`);
+    console.log(`🌐 المتصفح: ${browser}`);
+    console.log(`📍 الصفحة: ${method} ${url}`);
+    console.log(`🔧 User-Agent: ${userAgent}`);
+    console.log(`========================\n`);
+
+    next();
+});
+
 // إضافة headers للتعامل مع عدة جلسات
 app.use((req, res, next) => {
     res.header('Cache-Control', 'no-cache, no-store, must-revalidate');
@@ -61,6 +111,14 @@ function processWriteQueue() {
     }
 }
 
+app.get('/', (req, res, next) => {
+    console.log(`🎮 === لاعب دخل اللعبة ===`);
+    console.log(`📅 ${new Date().toLocaleString('ar-EG')}`);
+    console.log(`🎯 بدء جلسة لعب جديدة`);
+    console.log(`==========================\n`);
+    next();
+});
+
 app.get('/leaderboard', (req, res) => {
     const board = readLeaderboard();
     res.json(board);
@@ -79,12 +137,26 @@ app.post('/leaderboard', async (req, res) => {
         if (!user) {
             board.push({ username, score, avatar, boardSize, gameType });
             await writeLeaderboard(board);
+            console.log(`🏆 === رقم قياسي جديد! ===`);
+            console.log(`🏅 اللاعب: ${username}`);
+            console.log(`⏱️ الوقت: ${score} ثانية`);
+            console.log(`🎯 حجم اللوحة: ${boardSize}`);
+            console.log(`🎮 نوع اللعبة: ${gameType}`);
+            console.log(`📅 ${new Date().toLocaleString('ar-EG')}`);
+            console.log(`==========================\n`);
             res.json({ status: "added" });
         } else {
             if (score < user.score) {
                 user.score = score;
                 user.avatar = avatar;
                 await writeLeaderboard(board);
+                console.log(`🏆 === تحسين رقم قياسي! ===`);
+                console.log(`🏅 اللاعب: ${username}`);
+                console.log(`⏱️ الوقت الجديد: ${score} ثانية`);
+                console.log(`🎯 حجم اللوحة: ${boardSize}`);
+                console.log(`🎮 نوع اللعبة: ${gameType}`);
+                console.log(`📅 ${new Date().toLocaleString('ar-EG')}`);
+                console.log(`==========================\n`);
                 res.json({ status: "updated" });
             } else {
                 res.json({ status: "notupdated" });
@@ -97,8 +169,20 @@ app.post('/leaderboard', async (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log('\n==== Ready !  ====');
-    console.log(`game home    http://localhost:${PORT}`);
-    console.log(`لوحة الصدارة عبر:  http://localhost:${PORT}/leaderboard`);
-    console.log('================\n');
+    console.log('\n🎮 ==== خادم لعبة الذاكرة جاهز! ====');
+    console.log(`🌐 الرابط المحلي: http://localhost:${PORT}`);
+    console.log(`🏆 لوحة الصدارة: http://localhost:${PORT}/leaderboard`);
+    console.log(`📅 وقت البدء: ${new Date().toLocaleString('ar-EG')}`);
+
+    // عرض إحصائيات أساسية
+    const board = readLeaderboard();
+    console.log(`📊 إجمالي الأرقام القياسية: ${board.length}`);
+
+    if (board.length > 0) {
+        const bestScore = Math.min(...board.map(b => b.score));
+        const bestPlayer = board.find(b => b.score === bestScore);
+        console.log(`🥇 أفضل لاعب: ${bestPlayer.username} (${bestScore} ثانية)`);
+    }
+
+    console.log('=====================================\n');
 });
