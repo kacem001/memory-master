@@ -99,10 +99,12 @@ function processWriteQueue() {
     const { data, resolve } = writeQueue.shift();
 
     try {
+        console.log('📝 حفظ البيانات في الملف...', data.length, 'عنصر');
         fs.writeFileSync(leaderboardFile, JSON.stringify(data, null, 2));
+        console.log('✅ تم حفظ البيانات بنجاح في', leaderboardFile);
         resolve(true);
     } catch (error) {
-        console.error('Error writing leaderboard:', error);
+        console.error('❌ خطأ في حفظ لوحة الصدارة:', error);
         resolve(false);
     } finally {
         isWriting = false;
@@ -125,13 +127,19 @@ app.get('/leaderboard', (req, res) => {
 });
 
 app.post('/leaderboard', async (req, res) => {
+    console.log('📥 === طلب حفظ نتيجة ===');
+    console.log('البيانات المستلمة:', req.body);
+
     const { username, score, avatar, boardSize, gameType } = req.body;
     if (!username || !score || !boardSize) {
+        console.log('❌ بيانات ناقصة:', { username, score, boardSize });
         return res.status(400).json({ error: "name, score, and board required" });
     }
 
     try {
         let board = readLeaderboard();
+        console.log('📋 لوحة الصدارة الحالية:', board.length, 'عنصر');
+
         let user = board.find(u => u.username === username && u.boardSize === boardSize && u.gameType === gameType);
 
         if (!user) {
@@ -159,11 +167,12 @@ app.post('/leaderboard', async (req, res) => {
                 console.log(`==========================\n`);
                 res.json({ status: "updated" });
             } else {
+                console.log(`📊 لا يوجد تحسن: ${username} - ${score} >= ${user.score}`);
                 res.json({ status: "notupdated" });
             }
         }
     } catch (error) {
-        console.error('Error processing leaderboard:', error);
+        console.error('❌ خطأ في معالجة لوحة الصدارة:', error);
         res.status(500).json({ error: "Server error" });
     }
 });
